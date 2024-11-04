@@ -1,4 +1,4 @@
-from math import sin, cos, radians, sqrt
+from math import sin, cos, radians, sqrt, degrees  # Adicione 'degrees' à importação
 import sys
 import time
 from random import choice, uniform, randint
@@ -302,7 +302,46 @@ def draw_ground():
     glEnd()
     glDisable(GL_TEXTURE_2D)
 
-# As demais funções permanecem as mesmas...
+# Função para desenhar o jogador
+def draw_player():
+    glPushMatrix()
+    glTranslatef(pos_x, pos_y, pos_z)
+    glRotatef(degrees(rot_y), 0, 1, 0)  # Rotaciona o jogador conforme a direção
+    glColor3f(1, 0, 0)  # Cor vermelha para o jogador
+    # Desenha o corpo
+    glPushMatrix()
+    glTranslatef(0, 0.75, 0)
+    glScalef(0.5, 1.0, 0.3)
+    glutSolidCube(1)
+    glPopMatrix()
+    # Desenha a cabeça
+    glPushMatrix()
+    glTranslatef(0, 1.75, 0)
+    glutSolidSphere(0.25, 16, 16)
+    glPopMatrix()
+    # Desenha as pernas
+    glPushMatrix()
+    glTranslatef(-0.15, 0.25, 0)
+    glScalef(0.2, 0.5, 0.2)
+    glutSolidCube(1)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(0.15, 0.25, 0)
+    glScalef(0.2, 0.5, 0.2)
+    glutSolidCube(1)
+    glPopMatrix()
+    # Desenha os braços
+    glPushMatrix()
+    glTranslatef(-0.4, 1.0, 0)
+    glScalef(0.2, 0.6, 0.2)
+    glutSolidCube(1)
+    glPopMatrix()
+    glPushMatrix()
+    glTranslatef(0.4, 1.0, 0)
+    glScalef(0.2, 0.6, 0.2)
+    glutSolidCube(1)
+    glPopMatrix()
+    glPopMatrix()
 
 # Função para detecção de colisão
 def check_collision():
@@ -490,6 +529,10 @@ def display():
 
         # Atualiza o ângulo de rotação do toro
         toro_rotation_angle += 2.0
+
+        # Desenha o jogador se a câmera não estiver em primeira pessoa
+        if camera_mode != 0:
+            draw_player()
 
         # Desenha a animação de bônus se ativa
         if bonus_animation_active:
