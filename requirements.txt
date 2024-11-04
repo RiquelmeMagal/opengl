@@ -1,0 +1,5 @@
+numpy==1.23.5
+pillow==11.0.0
+pygame==2.6.1
+PyOpenGL==3.1.6
+PyOpenGL-accelerate==3.1.6
