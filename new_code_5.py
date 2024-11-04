@@ -40,7 +40,7 @@ educational_info = {
     'Esfera': 'A esfera é um sólido perfeitamente redondo em três dimensões.',
     'Cone': 'O cone tem uma base circular e um vértice.',
     'Toro': 'O toro é uma superfície gerada pela rotação de um círculo em torno de um eixo.',
-    'Teapot': 'O bule de Utah é um modelo padrão em computação gráfica.',
+    'Losango': 'O losango 3D é formado por duas pirâmides de base quadrada unidas pelas bases.',
     'Dodecaedro': 'O dodecaedro regular tem 12 faces pentagonais.',
     'Casa': 'Uma casa típica tem uma base cúbica e um telhado em forma de pirâmide.',
 }
@@ -72,9 +72,9 @@ quiz_questions = {
         'options': ['A) 1', 'B) 2', 'C) 0'],
         'answer': 'A',
     },
-    'Teapot': {
-        'question': 'O bule de Utah é famoso em que área?',
-        'options': ['A) Matemática', 'B) Física', 'C) Computação Gráfica'],
+    'Losango': {
+        'question': 'Quantas faces tem um losango 3D formado por duas pirâmides?',
+        'options': ['A) 4', 'B) 6', 'C) 8'],
         'answer': 'C',
     },
     'Dodecaedro': {
@@ -123,7 +123,7 @@ class GameObject:
 
     def respawn(self):
         possible_shapes = [
-            'Cubo', 'Esfera', 'Cone', 'Toro', 'Teapot', 'Dodecaedro',
+            'Cubo', 'Esfera', 'Cone', 'Toro', 'Losango', 'Dodecaedro',
             'Cilindro', 'Pirâmide', 'Octaedro'
         ]
         composite_shapes = ['Casa']
@@ -153,7 +153,7 @@ def load_textures():
         'esfera': 'metal.jpg',
         'cone': 'stone.jpg',
         'toro': 'gold.jpg',
-        'teapot': 'ceramic.jpg',
+        'losango': 'diamond.jpg',
         'dodecaedro': 'marble.jpg',
         'casa': 'brick.jpg',
         # Adicione texturas para novos objetos se desejar
@@ -185,7 +185,7 @@ def init_objects():
         GameObject('Esfera', (0, 1, 0), (0, 0.5, -5), 1),     # Esfera verde
         GameObject('Cone', (0, 0, 1), (3, 0.5, -5), 1),       # Cone azul
         GameObject('Toro', (1, 1, 0), (0, 0.5, -8), 1),       # Toro amarelo giratório
-        GameObject('Teapot', (1, 0, 1), (5, 0.5, -6), 1),     # Teapot rosa
+        GameObject('Losango', (1, 0, 1), (5, 0.5, -6), 1),    # Losango rosa
         GameObject('Dodecaedro', (0, 1, 1), (-5, 0.5, -6), 1),# Dodecaedro ciano
     ]
 
@@ -224,9 +224,9 @@ def draw_object(obj):
         elif obj.shape == 'Toro':
             glRotatef(toro_rotation_angle, 0, 1, 0)
             glutSolidTorus(obj.size / 4, obj.size / 2, 20, 20)
-        elif obj.shape == 'Teapot':
+        elif obj.shape == 'Losango':
             glScalef(obj.size, obj.size, obj.size)
-            glutSolidTeapot(1)
+            draw_double_pyramid()
         elif obj.shape == 'Dodecaedro':
             glPushMatrix()
             glTranslatef(0, obj.size / 2, 0)
@@ -236,6 +236,35 @@ def draw_object(obj):
         # Adicione outros objetos aqui se desejar
         glDisable(GL_TEXTURE_2D)
     glPopMatrix()
+
+# Função para desenhar duas pirâmides unidas pela base (losango 3D)
+def draw_double_pyramid():
+    vertices = [
+        [ 0.0,  1.0,  0.0],  # Vértice superior
+        [-1.0,  0.0,  1.0],  # Base 1
+        [ 1.0,  0.0,  1.0],  # Base 2
+        [ 1.0,  0.0, -1.0],  # Base 3
+        [-1.0,  0.0, -1.0],  # Base 4
+        [ 0.0, -1.0,  0.0],  # Vértice inferior
+    ]
+
+    faces = [
+        [0, 1, 2],  # Face lateral superior 1
+        [0, 2, 3],  # Face lateral superior 2
+        [0, 3, 4],  # Face lateral superior 3
+        [0, 4, 1],  # Face lateral superior 4
+        [5, 2, 1],  # Face lateral inferior 1
+        [5, 3, 2],  # Face lateral inferior 2
+        [5, 4, 3],  # Face lateral inferior 3
+        [5, 1, 4],  # Face lateral inferior 4
+    ]
+
+    glBegin(GL_TRIANGLES)
+    for face in faces:
+        for vertex in face:
+            glTexCoord2f(0.0, 0.0)
+            glVertex3fv(vertices[vertex])
+    glEnd()
 
 # Função para desenhar um objeto composto (exemplo: casa)
 def draw_house(size):
